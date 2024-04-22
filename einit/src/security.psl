@@ -1,6 +1,7 @@
 /* Security configuration of the "traffic light" example. */
 /* nk.basic._ is required for comparison operations support in policies, like != below */
 use nk.basic._
+use nk.hashmap._
 
 /* Definition of the execute interface. */
 execute: kl.core.Execute
@@ -15,8 +16,59 @@ use EDL kl.core.Core
 use EDL traffic_light.ControlSystem
 use EDL traffic_light.LightsGPIO
 
+/* Security policy. */
+policy object tl_cycle_specification : HashSet {
+    type Entry = [UInt32, UInt32]
+
+    config = {
+        set_size: 18,
+        pool_size: 1
+    }
+}
+
+
 /* Execution of entities allowed. */
 execute {
+    grant ()
+}
+
+/* Initialization  security policy and filling traffic light cycle rules. */
+execute src=Einit dst=traffic_light.LightsGPIO{
+
+    tl_cycle_specification.init {sid : dst_sid}
+
+    //dir1 -> phase 1
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x04, 0x01]} // WorkGreen | WorkRed
+    tl_cycle_specification.add {sid : dst_sid, entry : [0xC, 0x01]} // WorkGreenBlink | WorkRed
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x02, 0x09]} // WorkYellow | WorkRedBlink
+
+    //dir1 -> phase 2
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x04]} // WorkRed | WorkGreen
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0xC]}  // WorkRed | WorkGreenBlink
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x02]} // WorkRed | WorkYellow
+
+    //dir1 -> phase 3
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x01]} // WorkRed | WorkRed
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x03, 0x01]} // WorkRed+WorkYellow | WorkRed
+
+    //dir2 -> phase 1
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x04]} // WorkRed | WorkGreen
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0xC]}  // WorkRed | WorkGreenBlink
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x09, 0x02]} // WorkRedBlink | WorkYellow
+
+    //dir2 -> phase 2
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x04, 0x01]} // WorkGreen | WorkRed
+    tl_cycle_specification.add {sid : dst_sid, entry : [0xC, 0x01]}  // WorkGreenBlink | WorkRed
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x02, 0x01]} // WorkYellow | WorkRed
+
+    //dir2 -> phase 3
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x01]} // WorkRed | WorkRed
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x03]} // WorkRed | WorkRed+WorkYellow
+
+    //special mode
+    tl_cycle_specification.add {sid : dst_sid, entry : [0xA, 0xA]}   // WorkYellowBlink | WorkYellowBlink
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x10, 0x10]} // WorkOff | WorkOff
+
     grant ()
 }
 
@@ -31,21 +83,24 @@ request src=traffic_light.ControlSystem dst=kl.core.Core {
 }
 
 
-request src=traffic_light.ControlSystem 
-    dst=traffic_light.LightsGPIO 
-    endpoint=lightsGpio.mode 
-    method=FMode {
+request src=traffic_light.ControlSystem
+    dst=traffic_light.LightsGPIO
+    endpoint=lightsGpio.mode
+    method=SetMode {
         grant()
 }
 
-/*
-request src=traffic_light.ControlSystem 
-    dst=traffic_light.LightsGPIO 
-    endpoint=lightsGpio.mode 
-    method=FMode {
-        assert (message.value != 0x404)        
+/* There is setting light mode*/
+request src=traffic_light.ControlSystem
+    dst=traffic_light.LightsGPIO
+    endpoint=lightsGpio.mode
+    method=SetMode {
+      assert(
+        tl_cycle_specification.contains {sid: dst_sid, entry: [message.mode.dir0, message.mode.dir1]} ||
+        tl_cycle_specification.contains {sid: dst_sid, entry: [message.mode.dir1, message.mode.dir0]}
+      )
 }
-*/
+
 
 request src=Einit {
     grant ()

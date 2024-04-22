@@ -1,0 +1,15 @@
+d-build:
+	docker build ./ -t kos:1.1.1.40u20.04
+
+develop:
+	cmd /C "docker run --net=host --volume="%cd%:/data" --name traffic-light-kos --user user -it --rm kos:1.1.1.40u20.04 bash"
+
+
+build:
+	./cross-build.sh
+
+sim:
+	./cross-build-sim.sh
+
+clean:
+	rm -rf build

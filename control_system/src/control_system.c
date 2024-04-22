@@ -14,24 +14,44 @@
 
 #define MODES_NUM 9
 
+/* all possible combination mode */
+#define ALLOWED_MODES_COMBINATIONS 32
+
+static void SetMode(uint32_t mode0, uint32_t mode1, traffic_light_IMode_proxy* proxy){
+
+    /* Request and response structures */
+    traffic_light_IMode_SetMode_req req = {
+            .mode = { .dir0 = mode0, .dir1 = mode1 }
+    };
+    traffic_light_IMode_SetMode_res res;
+
+    /*
+      * Call Mode interface method.
+      * Lights GPIO will be sent a request for calling Mode interface method
+      * mode_comp.mode_impl with the value argument. Calling thread is locked
+      * until a response is received from the lights gpio.
+    */
+
+    nk_err_t result = traffic_light_IMode_SetMode(&(proxy->base), &req, NULL, &res, NULL);
+    if (result != rcOk){
+        fprintf(stderr, "[FAIL]\tFailed to call traffic_light.Mode.Mode()\t dir0 = 0x%02x; dir1 = 0x%02x\n", (int) (req.mode.dir0  & 0xFF), (int) (req.mode.dir1 & 0xFF));
+        return;
+    }
+
+    /*
+       * Print result value from response
+       * (result is the output argument of the Mode method).
+    */
+    fprintf(stderr, "[OK]\ttraffic_light.Mode.Mode() called successfully\t dir0 = 0x%02x; dir1 = 0x%02x\n", (int) (res.result.dir0  & 0xFF), (int) (res.result.dir1  & 0xFF));
+
+}
+
 
 /* Control system entity entry point. */
 int main(int argc, const char *argv[])
 {
     NkKosTransport transport;
     struct traffic_light_IMode_proxy proxy;
-    int i;
-    static const nk_uint32_t tl_modes[MODES_NUM] = {
-        traffic_light_IMode_Direction1Red + traffic_light_IMode_Direction2Red,
-        traffic_light_IMode_Direction1Red + traffic_light_IMode_Direction1Yellow + traffic_light_IMode_Direction2Red,
-        traffic_light_IMode_Direction1Green + traffic_light_IMode_Direction2Red,
-        traffic_light_IMode_Direction1Yellow + traffic_light_IMode_Direction2Red,
-        traffic_light_IMode_Direction1Red + traffic_light_IMode_Direction2Yellow + traffic_light_IMode_Direction2Red,
-        traffic_light_IMode_Direction1Red + traffic_light_IMode_Direction2Green,
-        traffic_light_IMode_Direction1Red + traffic_light_IMode_Direction2Yellow,
-        traffic_light_IMode_Direction1Yellow + traffic_light_IMode_Direction1Blink + traffic_light_IMode_Direction2Yellow + traffic_light_IMode_Direction2Blink,
-        traffic_light_IMode_Direction1Green + traffic_light_IMode_Direction2Green // <-- try to forbid this via security policies
-    };
 
     fprintf(stderr, "Hello I'm ControlSystem\n");
 
@@ -60,38 +80,11 @@ int main(int argc, const char *argv[])
      */
     traffic_light_IMode_proxy_init(&proxy, &transport.base, riid);
 
-    /* Request and response structures */
-    traffic_light_IMode_FMode_req req;
-    traffic_light_IMode_FMode_res res;
-
     /* Test loop. */
-    req.value = 0;
-    for (i = 0; i < MODES_NUM; i++)
-    {
-        req.value = tl_modes[i];
-        /**
-         * Call Mode interface method.
-         * Lights GPIO will be sent a request for calling Mode interface method
-         * mode_comp.mode_impl with the value argument. Calling thread is locked
-         * until a response is received from the lights gpio.
-         */
-        if (traffic_light_IMode_FMode(&proxy.base, &req, NULL, &res, NULL) == rcOk)
-
-        {
-            /**
-             * Print result value from response
-             * (result is the output argument of the Mode method).
-             */
-            fprintf(stderr, "result = %0x\n", (int) res.result);
-            /**
-             * Include received result value into value argument
-             * to resend to lights gpio in next iteration.
-             */
-            req.value = res.result;
-
+    for(uint32_t modeO = 0; modeO < ALLOWED_MODES_COMBINATIONS; ++modeO){
+        for(uint32_t mode1 = 0; mode1 < ALLOWED_MODES_COMBINATIONS; ++mode1){
+            SetMode(modeO, mode1, &proxy);
         }
-        else
-            fprintf(stderr, "Failed to call traffic_light.Mode.Mode()\n");
     }
 
     return EXIT_SUCCESS;

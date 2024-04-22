@@ -2,18 +2,28 @@
 
 package traffic_light.IMode
 
-const UInt32 Direction1Red          = 1;
-const UInt32 Direction1Yellow       = 2;
-const UInt32 Direction1Green        = 4;
-const UInt32 Direction1Blink        = 8;
 
-const UInt32 Direction2Red          = 0x100;
-const UInt32 Direction2Yellow       = 0x200;
-const UInt32 Direction2Green        = 0x400;
-const UInt32 Direction2Blink        = 0x800;
+/* allowed traffic light modes */
+typedef UInt32 WorkType;
+const WorkType WorkRed          = 1;
+const WorkType WorkYellow       = 2;
+const WorkType WorkGreen        = 4;
+const WorkType WorkBlink        = 8;
+const WorkType WorkOff          = 16;
+
+const WorkType WorkRedBlink     = 9;
+const WorkType WorkYellowBlink  = 10;
+const WorkType WorkGreenBlink   = 12;
+
+/* crossways traffic lights */
+typedef UInt32 Crossway;
+struct CrosswaysMode {
+    Crossway dir0;
+    Crossway dir1;
+}
 
 
 interface {
     /* IMode interface method */
-    FMode(in UInt32 value, out UInt32 result);
+    SetMode(in CrosswaysMode mode, out CrosswaysMode result);
 }

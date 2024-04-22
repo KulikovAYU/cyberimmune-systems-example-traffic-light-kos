@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSharedSettings">
+    <configurations>
+      <configuration PROFILE_NAME="KaoS-Docker" ENABLED="true" GENERATION_DIR="build" CONFIG_NAME="Debug" TOOLCHAIN_NAME="KaoS-Docker" GENERATION_OPTIONS="-DCMAKE_INSTALL_PREFIX:STRING=$CMakeProjectDir$/install -DCMAKE_FIND_ROOT_PATH=/sysroot-aarch64-kos -DCMAKE_TOOLCHAIN_FILE=/opt/KasperskyOS-Community-Edition-1.1.1.40/toolchain/share/toolchain-aarch64-kos.cmake" GENERATION_PASS_SYSTEM_ENVIRONMENT="false">
+        <ADDITIONAL_GENERATION_ENVIRONMENT>
+          <envs>
+            <env name="PATH" value="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/KasperskyOS-Community-Edition-1.1.1.40/toolchain/bin" />
+            <env name="SDK_PREFIX" value="/opt/KasperskyOS-Community-Edition-1.1.1.40" />
+          </envs>
+        </ADDITIONAL_GENERATION_ENVIRONMENT>
+      </configuration>
+    </configurations>
+  </component>
+</project>
