@@ -86,7 +86,7 @@ request src=traffic_light.ControlSystem dst=kl.core.Core {
 request src=traffic_light.ControlSystem
     dst=traffic_light.LightsGPIO
     endpoint=lightsGpio.mode
-    method=SetMode {
+    method=FMode {
         grant()
 }
 
@@ -94,7 +94,7 @@ request src=traffic_light.ControlSystem
 request src=traffic_light.ControlSystem
     dst=traffic_light.LightsGPIO
     endpoint=lightsGpio.mode
-    method=SetMode {
+    method=FMode {
       assert(
         tl_cycle_specification.contains {sid: dst_sid, entry: [message.mode.dir0, message.mode.dir1]} ||
         tl_cycle_specification.contains {sid: dst_sid, entry: [message.mode.dir1, message.mode.dir0]}

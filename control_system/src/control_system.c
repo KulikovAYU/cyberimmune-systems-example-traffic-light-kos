@@ -20,10 +20,10 @@
 static void SetMode(uint32_t mode0, uint32_t mode1, traffic_light_IMode_proxy* proxy){
 
     /* Request and response structures */
-    traffic_light_IMode_SetMode_req req = {
+    traffic_light_IMode_FMode_req req = {
             .mode = { .dir0 = mode0, .dir1 = mode1 }
     };
-    traffic_light_IMode_SetMode_res res;
+    traffic_light_IMode_FMode_res res;
 
     /*
       * Call Mode interface method.
@@ -32,7 +32,7 @@ static void SetMode(uint32_t mode0, uint32_t mode1, traffic_light_IMode_proxy* p
       * until a response is received from the lights gpio.
     */
 
-    nk_err_t result = traffic_light_IMode_SetMode(&(proxy->base), &req, NULL, &res, NULL);
+    nk_err_t result = traffic_light_IMode_FMode(&(proxy->base), &req, NULL, &res, NULL);
     if (result != rcOk){
         fprintf(stderr, "[FAIL]\tFailed to call traffic_light.Mode.Mode()\t dir0 = 0x%02x; dir1 = 0x%02x\n", (int) (req.mode.dir0  & 0xFF), (int) (req.mode.dir1 & 0xFF));
         return;
@@ -42,7 +42,7 @@ static void SetMode(uint32_t mode0, uint32_t mode1, traffic_light_IMode_proxy* p
        * Print result value from response
        * (result is the output argument of the Mode method).
     */
-    fprintf(stderr, "[OK]\ttraffic_light.Mode.Mode() called successfully\t dir0 = 0x%02x; dir1 = 0x%02x\n", (int) (res.result.dir0  & 0xFF), (int) (res.result.dir1  & 0xFF));
+    fprintf(stderr, "[OK]\ttraffic_light.Mode.Mode() called successfully\t dir0 = 0x%02x; dir1 = 0x%02x\n", (int) (res. result.dir0  & 0xFF), (int) (res.res_.result.dir1  & 0xFF));
 
 }
 

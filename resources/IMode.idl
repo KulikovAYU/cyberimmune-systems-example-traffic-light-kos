@@ -5,11 +5,11 @@ package traffic_light.IMode
 
 /* allowed traffic light modes */
 typedef UInt32 WorkType;
+const WorkType WorkOff          = 0;
 const WorkType WorkRed          = 1;
 const WorkType WorkYellow       = 2;
 const WorkType WorkGreen        = 4;
 const WorkType WorkBlink        = 8;
-const WorkType WorkOff          = 16;
 
 const WorkType WorkRedBlink     = 9;
 const WorkType WorkYellowBlink  = 10;
@@ -25,5 +25,5 @@ struct CrosswaysMode {
 
 interface {
     /* IMode interface method */
-    SetMode(in CrosswaysMode mode, out CrosswaysMode result);
+    FMode(in CrosswaysMode mode, out CrosswaysMode result);
 }

@@ -31,7 +31,8 @@ static nk_err_t FMode_impl(struct traffic_light_IMode *self,
      * one step and include into result argument that will be
      * sent to the control system in the lights gpio response.
      */
-    res->result = req->value + impl->step;
+    //res->result = req->mode + impl->step;
+    res->result = req->mode;
     return NK_EOK;
 }
 

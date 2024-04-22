@@ -78,3 +78,24 @@ English version will be available later below
 Example: traffic light control (partial) implementation with KasperskyOS
 
 Transformation of the echo example into the new project.
+
+## Домашнее задание: День 1
+
+Задание:
+
+1. ✅ Сделать [fork](https://github.com/KulikovAYU/cyberimmune-systems-example-traffic-light-kos) исходного [репозитория](https://github.com/cyberimmunity-edu/cyberimmune-systems-example-traffic-light-kos)
+
+2. ✅ В своём репозитории изменить политики безопасности так, чтобы не допустить комбинации «два зелёных»
+
+3. ✅ Изменить политики безопасности так, чтобы не допустить вариант «два зелёных» в сочетании с другими цветами. 
+
+4. ✅ Отправить все свои изменения в свой репозиторий на github в
+ветку [day1-homework](https://github.com/KulikovAYU/cyberimmune-systems-example-traffic-light-kos/tree/day1-homework)
+
+## Пример схемы светофорного цикла
+
+<img src="pictures/traffic_light_cycle.jpg" width="500" height="auto">
+
+## Пример работы
+
+<img src="pictures/prog_sample.jpg" width="500" height="auto">
