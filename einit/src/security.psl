@@ -67,7 +67,7 @@ execute src=Einit dst=traffic_light.LightsGPIO{
 
     //special mode
     tl_cycle_specification.add {sid : dst_sid, entry : [0xA, 0xA]}   // WorkYellowBlink | WorkYellowBlink
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x10, 0x10]} // WorkOff | WorkOff
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x0, 0x0]} // WorkOff | WorkOff
 
     grant ()
 }
