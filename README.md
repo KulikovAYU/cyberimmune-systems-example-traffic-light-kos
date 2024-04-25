@@ -83,19 +83,24 @@ Transformation of the echo example into the new project.
 
 Задание:
 
-1. ✅ Сделать [fork](https://github.com/KulikovAYU/cyberimmune-systems-example-traffic-light-kos) исходного [репозитория](https://github.com/cyberimmunity-edu/cyberimmune-systems-example-traffic-light-kos)
+1. ✅  Создать ветку day2-homework у себя в репозитории.
 
-2. ✅ В своём репозитории изменить политики безопасности так, чтобы не допустить комбинации «два зелёных»
+2. ✅ В примере «светофор» реализовать сущность diagnostics по аналогии с [echo2c](https://github.com/cyberimmunity-edu/cyberimmune-systems-example-traffic-light-kos/tree/example-echo2c).
 
-3. ✅ Изменить политики безопасности так, чтобы не допустить вариант «два зелёных» в сочетании с другими цветами. 
+Ожидаемый результат: после запуска системы появляется сообщение от новой сущности
+
+3. ✅  Реализовать IPC взаимодействие между LightsGPIO и Diagnostics. Передать сообщение при помощи arena.
+
+Ожидаемый результат: тестовое сообщение от LightsGPIO получено в Diagnostics
+Примечание: для этого задания может быть полезным посмотреть код примера из SDK secure_logger
+
+5. ✅ Реализовать вывод состояния по TCP/IP сети (при подключении на порт 7777 выдавать информацию о состоянии в котором светофор в данный момент).
+
+Ожидаемый результат: при подключении к 7777 порту получать число.
+
+6. ✅ Реализовать вывод аудита только для взаимодействий между LightsGPIO и Diagnostics.
+
+Ожидаемый результат: при запуске решения в журнале вывода получить сообщения аудита для взаимодействия между LIghtsGPIO и Diagnostics
 
 4. ✅ Отправить все свои изменения в свой репозиторий на github в
-ветку [day1-homework](https://github.com/KulikovAYU/cyberimmune-systems-example-traffic-light-kos/tree/day1-homework)
-
-## Пример схемы светофорного цикла
-
-<img src="pictures/traffic_light_cycle.jpg" width="500" height="auto">
-
-## Пример работы
-
-<img src="pictures/prog_sample.jpg" width="500" height="auto">
+ветку [day2-homework](https://github.com/KulikovAYU/cyberimmune-systems-example-traffic-light-kos/tree/day2-homework)

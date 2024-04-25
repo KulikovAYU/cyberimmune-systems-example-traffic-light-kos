@@ -15,6 +15,7 @@ use EDL kl.core.Core
 
 use EDL traffic_light.ControlSystem
 use EDL traffic_light.LightsGPIO
+use EDL traffic_light.Diagnostics
 
 /* Security policy. */
 policy object tl_cycle_specification : HashSet {
@@ -69,6 +70,11 @@ execute src=Einit dst=traffic_light.LightsGPIO{
     tl_cycle_specification.add {sid : dst_sid, entry : [0xA, 0xA]}   // WorkYellowBlink | WorkYellowBlink
     tl_cycle_specification.add {sid : dst_sid, entry : [0x0, 0x0]} // WorkOff | WorkOff
 
+    grant ()
+}
+
+/* allow diagnostic module. */
+request src=traffic_light.Diagnostics dst=kl.core.Core {
     grant ()
 }
 
