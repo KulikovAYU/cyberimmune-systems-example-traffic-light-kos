@@ -1,0 +1,9 @@
+component traffic_light.IDiagMessage
+
+const UInt32 MaxLogMessageSize = 256;
+
+typedef sequence<UInt8, MaxLogMessageSize> MsgString;
+
+interface {
+    DMessage(in UInt32 code, in MsgString msg);
+}

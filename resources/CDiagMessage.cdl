@@ -1,0 +1,5 @@
+component traffic_light.CDiagMessage
+
+endpoints {
+    dmessage : traffic_light.IDiagMessage
+}

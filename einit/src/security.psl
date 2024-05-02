@@ -120,6 +120,14 @@ request src=traffic_light.LightsGPIO dst=kl.core.Core {
     grant ()
 }
 
+/* allow request to diagnostics module */
+request src=traffic_light.LightsGPIO
+    dst=traffic_light.Diagnostics
+    endpoint=diagnostics.dmessage
+    method=DMessage{
+    grant()
+}
+
 
 /* Response messages allowed. */
 response {
