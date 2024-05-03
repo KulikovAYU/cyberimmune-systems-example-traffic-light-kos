@@ -1,4 +1,4 @@
-component traffic_light.IDiagMessage
+package traffic_light.IDiagMessage
 
 const UInt32 MaxLogMessageSize = 256;
 
