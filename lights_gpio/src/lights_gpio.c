@@ -1,4 +1,4 @@
-
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -14,6 +14,7 @@
 #include <traffic_light/IDiagMessage.idl.h>
 
 #include <assert.h>
+#include "server.h"
 
 static uint32_t lights_mode[2] = {0};
 
@@ -45,6 +46,10 @@ static nk_err_t FMode_impl(struct traffic_light_IMode *self,
     /* Запомнить состояние*/
     lights_mode[0] = req->mode.dir0 & 0xFF;
     lights_mode[1] = req->mode.dir1 & 0xFF;
+
+    // send current state
+    direction dir = {lights_mode[0], lights_mode[1]};
+    server_send(dir);
 
     res->result = req->mode;
     return NK_EOK;
@@ -119,10 +124,13 @@ struct check_lights_result check_lights(){
 }
 
 static const char EntityName[] = "LightsGPIO";
+#define EXAMPLE_PORT 7777
 
 /* Lights GPIO entry point. */
 int main(void)
 {
+    server_run(EXAMPLE_PORT);
+
     NkKosTransport transport;
     ServiceId iid;
 
@@ -174,7 +182,7 @@ int main(void)
     NkKosTransport_Init(&d_transport, d_handle, NK_NULL, 0);
 
     nk_iid_t d_riid = ServiceLocatorGetRiid(d_handle, "diagnostics.dmessage");
-    assert(d_riid != INVALID_HANDLE);
+    //assert(d_riid != INVALID_HANDLE);
 
     IDiagMessage_proxy_init(&d_proxy, &d_transport.base, d_riid);
 
@@ -216,7 +224,6 @@ int main(void)
             fprintf(stderr, "nk_transport_reply error\n");
         }
 
-
         struct check_lights_result clr = check_lights();
         d_req.code = clr.code;
 
@@ -250,6 +257,9 @@ int main(void)
 
     }
     while (true);
+
+    sleep(60);
+    server_stop();
 
     return EXIT_SUCCESS;
 }

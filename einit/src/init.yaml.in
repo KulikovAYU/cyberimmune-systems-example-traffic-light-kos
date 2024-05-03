@@ -9,12 +9,28 @@ entities:
 
 # The `LightsGPIO` entity can only respond to requests.
 - name: traffic_light.LightsGPIO
+  env:
+    VFS_FILESYSTEM_BACKEND: client:kl.VfsNet
+    VFS_NETWORK_BACKEND: client:kl.VfsNet
   connections:
   - target: traffic_light.Diagnostics
     id: diagnostics_connection
+  - target: kl.VfsNet
+    id: kl.VfsNet
 @INIT_LightsGPIO_ENTITY_CONNECTIONS@
 
+# Entity "client"
+- name: client.Client
+  env:
+    VFS_FILESYSTEM_BACKEND: client:kl.VfsNet
+    VFS_NETWORK_BACKEND: client:kl.VfsNet
+  connections:
+  - target: kl.VfsNet
+    id: kl.VfsNet
+@INIT_Client_ENTITY_CONNECTIONS@
 
 # The `Diagnostics` entity can only respond to requests.
 - name: traffic_light.Diagnostics
 @INIT_Diagnostics_ENTITY_CONNECTIONS@
+
+@INIT_EXTERNAL_ENTITIES@

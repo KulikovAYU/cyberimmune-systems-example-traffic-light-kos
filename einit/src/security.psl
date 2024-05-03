@@ -13,6 +13,11 @@ use nk.base._
 use EDL Einit
 use EDL kl.core.Core
 
+use EDL kl.VfsNet
+use EDL kl.drivers.BSP
+use EDL kl.drivers.GPIO
+use EDL client.Client
+
 use EDL traffic_light.ControlSystem
 use EDL traffic_light.LightsGPIO
 use EDL traffic_light.Diagnostics
@@ -128,7 +133,6 @@ request src=traffic_light.LightsGPIO
     grant()
 }
 
-
 /* Response messages allowed. */
 response {
     grant ()
@@ -150,4 +154,84 @@ error {
 /* Calls to the security interface are ignored. */
 security {
     grant ()
+}
+
+/**
+ * Allows the tasks with the Einit class to start the tasks with the kl.VfsNet class.
+ */
+execute src=Einit, dst=kl.VfsNet{
+    grant()
+}
+
+/**
+ * Allows the tasks with the kl.VfsNet class to send requests to the KasperskyOS kernel and get
+ * responses. This enables the VfsNet program to use core endpoints.
+ */
+request src=kl.VfsNet, dst=kl.core.Core{
+    grant()
+}
+
+response src=kl.core.Core, dst=kl.VfsNet{
+    grant()
+}
+
+/**
+ * Allows the tasks with the Einit class to start the tasks with the client.Client class.
+ */
+execute src=Einit, dst=client.Client{
+    grant()
+}
+
+request src=client.Client, dst=kl.core.Core{
+    grant()
+}
+
+response src=kl.core.Core, dst=client.Client{
+    grant()
+}
+
+request src=client.Client, dst=kl.VfsNet{
+    grant()
+}
+
+request src=traffic_light.LightsGPIO, dst=kl.VfsNet{
+    grant()
+}
+
+response src=kl.VfsNet, dst=traffic_light.LightsGPIO{
+    grant()
+}
+
+response src=kl.VfsNet, dst=client.Client{
+    grant()
+}
+
+/**
+ * Allows the tasks with the kl.drivers.BSP class to send requests to the
+ * KasperskyOS kernel and get responses. This enables the BSP driver to use
+ * core endpoints.
+ */
+request src = kl.drivers.BSP, dst = kl.core.Core{
+    grant()
+}
+
+response src = kl.core.Core, dst = kl.drivers.BSP{
+    grant()
+}
+
+execute src=Einit, dst=kl.drivers.GPIO{
+    grant()
+}
+
+/**
+ * Allows the tasks with the kl.drivers.GPIO class
+ * to send requests to the KasperskyOS kernel and get responses.
+ * This enables the GPIO program to use core endpoints.
+ */
+request src = kl.drivers.GPIO, dst = kl.core.Core{
+    grant()
+}
+
+response src = kl.core.Core, dst = kl.drivers.GPIO{
+    grant()
 }

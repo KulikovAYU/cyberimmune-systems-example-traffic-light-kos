@@ -1,4 +1,5 @@
 
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -84,6 +85,7 @@ int main(int argc, const char *argv[])
     for(uint32_t modeO = 0; modeO < ALLOWED_MODES_COMBINATIONS; ++modeO){
         for(uint32_t mode1 = 0; mode1 < ALLOWED_MODES_COMBINATIONS; ++mode1){
             SetMode(modeO, mode1, &proxy);
+            //sleep(1);
         }
     }
 
