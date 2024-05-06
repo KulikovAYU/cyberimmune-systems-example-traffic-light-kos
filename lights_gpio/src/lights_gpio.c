@@ -258,7 +258,6 @@ int main(void)
     }
     while (true);
 
-    sleep(60);
     server_stop();
 
     return EXIT_SUCCESS;

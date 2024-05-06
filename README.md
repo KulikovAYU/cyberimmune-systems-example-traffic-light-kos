@@ -102,5 +102,5 @@ Transformation of the echo example into the new project.
 
 Ожидаемый результат: при запуске решения в журнале вывода получить сообщения аудита для взаимодействия между LIghtsGPIO и Diagnostics
 
-4. ✅ Отправить все свои изменения в свой репозиторий на github в
+7✅ Отправить все свои изменения в свой репозиторий на github в
 ветку [day2-homework](https://github.com/KulikovAYU/cyberimmune-systems-example-traffic-light-kos/tree/day2-homework)

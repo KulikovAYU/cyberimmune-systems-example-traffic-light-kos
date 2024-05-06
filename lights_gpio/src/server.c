@@ -181,4 +181,5 @@ void server_stop(void){
     close(serverSocketFD);
     pthread_join(ctrl_tid, NULL);
     destroy_buffer(cb_ptr);
+    fprintf(stderr, "[%s] Was stopped\n",  EntityName);
 }
