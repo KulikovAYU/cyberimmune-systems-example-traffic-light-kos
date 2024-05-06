@@ -18,88 +18,48 @@
 #define STATE_UNKNOWN -2
 
 typedef struct{
-    direction *buffer;
-    int head;
-    int tail;
-    int size;
+    direction buffer;
     pthread_mutex_t mtx;
-} circular_buffer;
+} direction_buffer;
 
 pthread_t ctrl_tid;
-circular_buffer* cb_ptr;
+direction_buffer* cb_ptr;
 int serverSocketFD = -1;
+static const char EntityName[] = "Server";
 
-static void destroy_buffer(circular_buffer* cb){
-    free(cb->buffer);
-    pthread_mutex_destroy(&cb->mtx);
-    free(cb);
+static void destroy_buffer(direction_buffer* db){
+    pthread_mutex_destroy(&db->mtx);
+    free(db);
 }
 
-static circular_buffer* create_buffer(int buff_size){
+static direction_buffer* create_buffer(void){
     if(cb_ptr != NULL)
         destroy_buffer(cb_ptr);
 
-    circular_buffer* cb = (circular_buffer*)malloc(sizeof(circular_buffer));
-    if (cb == NULL) {
-        fprintf(stderr, "Error: Memory allocation for circular_buffer failed.\n");
+    direction_buffer* db = (direction_buffer*)malloc(sizeof(direction_buffer));
+    if (db == NULL) {
+        fprintf(stderr, "Error: Memory allocation for direction_buffer failed.\n");
         return NULL;
     }
 
-    cb->buffer = (direction*) malloc((unsigned int)buff_size * sizeof(direction));
-    if (cb->buffer == NULL) {
-        fprintf(stderr, "Error: Memory allocation for buffer failed.\n");
-        free(cb);
-        return NULL;
-    }
+    pthread_mutex_init(&db->mtx, NULL);
+    fprintf(stderr, "[%s] Buffer was created\n", EntityName);
 
-    cb->head = 0;
-    cb->tail = 0;
-    cb->size = buff_size;
-    pthread_mutex_init(&cb->mtx, NULL);
-
-    fprintf(stderr, "Buffer was created\n");
-    return cb;
+    return db;
 }
 
-static void enqueue(circular_buffer* cb,direction data) {
-    pthread_mutex_lock(&cb->mtx);
-    cb->buffer[cb->head] = data;
-    cb->head = (cb->head + 1) % cb->size;
-    if (cb->head == cb->tail) {
-        cb->tail = (cb->tail + 1) % cb->size;
-    }
-    pthread_mutex_unlock(&cb->mtx);
+static void enqueue(direction_buffer* db, direction data) {
+    pthread_mutex_lock(&db->mtx);
+    db->buffer = data;
+    pthread_mutex_unlock(&db->mtx);
 }
 
-static int dequeue(circular_buffer* cb, direction* out_direction){
-    pthread_mutex_lock(&cb->mtx);
-
-    if (cb->head == cb->tail) {
-        //fprintf(stderr, "Buffer is empty\n");
-        pthread_mutex_unlock(&cb->mtx);
-        return 0;
-    }
-
-    *out_direction = cb->buffer[cb->tail];
-    cb->tail = (cb->tail + 1) % cb->size;
-    pthread_mutex_unlock(&cb->mtx);
-
+static int dequeue(direction_buffer* db, direction* out_direction){
+    pthread_mutex_lock(&db->mtx);
+    *out_direction = db->buffer;
+    pthread_mutex_unlock(&db->mtx);
     return 1;
 }
-//static direction dequeue(circular_buffer* cb) {
-//    pthread_mutex_lock(&cb->mtx);
-//    direction empty_direction = {-1, -1};
-//    if (cb->head == cb->tail) {
-//        fprintf(stderr, "Buffer is empty\n");
-//        pthread_mutex_unlock(&cb->mtx);
-//        return empty_direction;
-//    }
-//    direction data = cb->buffer[cb->tail];
-//    cb->tail = (cb->tail + 1) % cb->size;
-//    pthread_mutex_unlock(&cb->mtx);
-//
-//    return data;
-//}
 
 static void* do_start_server(void *ctx){
     int port = *(int*)ctx;
@@ -134,7 +94,7 @@ static void* do_start_server(void *ctx){
         goto exit;
     }
 
-    fprintf(stderr, "Server is now listening port %d\n", port);
+    fprintf(stderr, "[%s] is now listening port %d\n", EntityName, port);
 
     fd_set readset, writeset;
 
@@ -171,7 +131,6 @@ static void* do_start_server(void *ctx){
             if (STATE_REQUEST == state){
                 direction dir = {-1, -1};
                 if(dequeue(cb_ptr, &dir) > 0){
-                    //fprintf(stderr, "After request direction is dir0 = 0x%02x; dir1 = 0x%02x\n", (int) (dir.dir0  & 0xFF), (int) (dir.dir1 & 0xFF));
                     if (-1 == send(ConnectFD, &dir, sizeof(dir), 0)){
                         perror("send failed");
                         close(ConnectFD);
@@ -206,14 +165,14 @@ static void* do_start_server(void *ctx){
 
 void server_run(int port){
     //alloc buffer
-    cb_ptr = create_buffer(10);
+    cb_ptr = create_buffer();
     pthread_create(&ctrl_tid, NULL, do_start_server, &port);
 }
 
 void server_send(direction dir){
     assert(cb_ptr != NULL && "Error! Buffer was not allocated!\n");
     enqueue(cb_ptr, dir);
-    fprintf(stderr, "Sending current state\t dir0 = 0x%02x; dir1 = 0x%02x\n", (int) (dir.dir0  & 0xFF), (int) (dir.dir1 & 0xFF));
+    fprintf(stderr, "[%s] Sending current state\t dir0 = 0x%02x; dir1 = 0x%02x\n",  EntityName, (int) (dir.dir0  & 0xFF), (int) (dir.dir1 & 0xFF));
 }
 
 void server_stop(void){

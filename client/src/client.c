@@ -15,14 +15,15 @@
 #define EXAMPLE_PORT 7777
 #define NUM_RETRIES 10
 
+static const char EntityName[] = "Client";
+
 typedef struct {
     int dir0;
     int dir1;
 } direction;
 
-
 static void print_directions(direction* dir){
-    fprintf(stderr, "Current state is dir0 = 0x%02x; dir1 = 0x%02x\n", (int) (dir->dir0  & 0xFF), (int) (dir->dir1 & 0xFF));
+    fprintf(stderr, "[%s] Current state is dir0 = 0x%02x; dir1 = 0x%02x\n", EntityName, (int) (dir->dir0  & 0xFF), (int) (dir->dir1 & 0xFF));
 }
 
 direction prev_dir = {-1, -1};
@@ -93,9 +94,11 @@ static int poll_direction(direction* dir){
     return EXIT_SUCCESS;
 }
 
+
+
 int main(void){
 
-    fprintf(stderr, "Hello I'm Client\n");
+    fprintf(stderr, "Hello I'm %s\n", EntityName);
 
     /* Initialisation of network interface "en0". */
     if (!configure_net_iface(DEFAULT_INTERFACE, DEFAULT_ADDR, DEFAULT_MASK,

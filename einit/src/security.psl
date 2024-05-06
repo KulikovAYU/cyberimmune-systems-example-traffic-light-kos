@@ -43,36 +43,19 @@ execute src=Einit dst=traffic_light.LightsGPIO{
 
     tl_cycle_specification.init {sid : dst_sid}
 
-    //dir1 -> phase 1
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x04, 0x01]} // WorkGreen | WorkRed
-    tl_cycle_specification.add {sid : dst_sid, entry : [0xC, 0x01]} // WorkGreenBlink | WorkRed
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x02, 0x09]} // WorkYellow | WorkRedBlink
-
-    //dir1 -> phase 2
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x04]} // WorkRed | WorkGreen
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0xC]}  // WorkRed | WorkGreenBlink
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x02]} // WorkRed | WorkYellow
-
-    //dir1 -> phase 3
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x01]} // WorkRed | WorkRed
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x03, 0x01]} // WorkRed+WorkYellow | WorkRed
-
-    //dir2 -> phase 1
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x04]} // WorkRed | WorkGreen
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0xC]}  // WorkRed | WorkGreenBlink
-    tl_cycle_specification.add {sid : dst_sid, entry : [0x09, 0x02]} // WorkRedBlink | WorkYellow
-
-    //dir2 -> phase 2
     tl_cycle_specification.add {sid : dst_sid, entry : [0x04, 0x01]} // WorkGreen | WorkRed
     tl_cycle_specification.add {sid : dst_sid, entry : [0xC, 0x01]}  // WorkGreenBlink | WorkRed
     tl_cycle_specification.add {sid : dst_sid, entry : [0x02, 0x01]} // WorkYellow | WorkRed
-
-    //dir2 -> phase 3
     tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x01]} // WorkRed | WorkRed
     tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x03]} // WorkRed | WorkRed+WorkYellow
 
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x04]} // WorkRed | WorkGreen
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0xC]}  // WorkRed | WorkGreenBlink
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x01, 0x02]} // WorkRed | WorkYellow
+    tl_cycle_specification.add {sid : dst_sid, entry : [0x03, 0x01]} // WorkRed+WorkYellow | WorkRed
+
     //special mode
-    tl_cycle_specification.add {sid : dst_sid, entry : [0xA, 0xA]}   // WorkYellowBlink | WorkYellowBlink
+    tl_cycle_specification.add {sid : dst_sid, entry : [0xA, 0xA]} // WorkYellowBlink | WorkYellowBlink
     tl_cycle_specification.add {sid : dst_sid, entry : [0x0, 0x0]} // WorkOff | WorkOff
 
     grant ()

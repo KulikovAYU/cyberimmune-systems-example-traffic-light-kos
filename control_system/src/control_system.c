@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#define NK_USE_UNQUALIFIED_NAMES
+
 /* Files required for transport initialization. */
 #include <coresrv/nk/transport-kos.h>
 #include <coresrv/sl/sl_api.h>
@@ -13,7 +15,7 @@
 
 #include <assert.h>
 
-#define MODES_NUM 9
+#define MODES_NUM 10
 
 /* all possible combination mode */
 #define ALLOWED_MODES_COMBINATIONS 32
@@ -47,10 +49,28 @@ static void SetMode(uint32_t mode0, uint32_t mode1, traffic_light_IMode_proxy* p
 
 }
 
+typedef struct {
+    uint32_t duration;
+    uint32_t dir0;
+    uint32_t dir1;
+} tl_mode;
 
 /* Control system entity entry point. */
 int main(int argc, const char *argv[])
 {
+    const tl_mode tl_modes[MODES_NUM] = {
+            {20,  IMode_WorkGreen, IMode_WorkRed},
+            {3,  IMode_WorkGreenBlink, IMode_WorkRed},
+            {3,  IMode_WorkYellow, IMode_WorkRed},
+            {10,  IMode_WorkRed, IMode_WorkRed},
+            {3,  IMode_WorkRed, IMode_WorkRed + IMode_WorkYellow},
+            {25,  IMode_WorkRed, IMode_WorkGreen},
+            {3,  IMode_WorkRed, IMode_WorkGreenBlink},
+            {3,  IMode_WorkRed, IMode_WorkYellow},
+            {10,  IMode_WorkRed, IMode_WorkRed},
+            {3,  IMode_WorkRed + IMode_WorkYellow, IMode_WorkRed},
+    };
+
     NkKosTransport transport;
     struct traffic_light_IMode_proxy proxy;
 
@@ -81,6 +101,7 @@ int main(int argc, const char *argv[])
      */
     traffic_light_IMode_proxy_init(&proxy, &transport.base, riid);
 
+#ifdef BRUTE_FORCE
     /* Test loop. */
     for(uint32_t modeO = 0; modeO < ALLOWED_MODES_COMBINATIONS; ++modeO){
         for(uint32_t mode1 = 0; mode1 < ALLOWED_MODES_COMBINATIONS; ++mode1){
@@ -88,6 +109,12 @@ int main(int argc, const char *argv[])
             //sleep(1);
         }
     }
+#else
+    for (int mode = 0; mode < MODES_NUM; ++mode) {
+        SetMode(tl_modes[mode].dir0, tl_modes[mode].dir1, &proxy);
+        sleep(tl_modes[mode].duration);
+    }
+#endif
 
     return EXIT_SUCCESS;
 }

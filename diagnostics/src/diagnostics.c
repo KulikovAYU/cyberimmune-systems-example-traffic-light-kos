@@ -26,7 +26,7 @@ static nk_err_t DMessageImpl(struct traffic_light_IDiagMessage              *sel
     nk_uint32_t msg_len = 0;
     nk_ptr_t *msg = nk_arena_get(nk_char_t, reqArena, &(req->msg), &msg_len);
 
-    fprintf(stderr, "[%s]: Code[%u], Message:\"%s\"\n", EntityName, code, msg);
+    fprintf(stderr, "[%s] Code[%u], Message:\"%s\"\n", EntityName, code, msg);
 
     return NK_EOK;
 }
