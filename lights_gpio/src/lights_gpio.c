@@ -18,10 +18,10 @@
 
 static uint32_t lights_mode[2] = {0};
 
-struct check_lights_result{
+typedef struct {
     uint32_t code;
     char msg[256];
-};
+} check_lights_result;
 
 /* Type of interface implementing object. */
 typedef struct IModeImpl {
@@ -83,9 +83,9 @@ static struct traffic_light_IMode *CreateIModeImpl(rtl_uint32_t step)
 #define LIGHST_DOUBTFUL 63
 
 
-struct check_lights_result check_lights(){
+static check_lights_result check_lights(void){
 
-    struct check_lights_result clr = {.code = LIGHTS_OK};
+    check_lights_result clr = {.code = LIGHTS_OK};
     //memset(clr.msg, 0, 256);
     strncpy(clr.msg,"all ok",256);
 
@@ -224,7 +224,7 @@ int main(void)
             fprintf(stderr, "nk_transport_reply error\n");
         }
 
-        struct check_lights_result clr = check_lights();
+        check_lights_result clr = check_lights();
         d_req.code = clr.code;
 
         nk_req_reset(&d_req);
