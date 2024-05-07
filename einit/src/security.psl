@@ -80,15 +80,15 @@ policy object audit_specification : Base {}
 
 request src=traffic_light.LightsGPIO,
     dst=traffic_light.Diagnostics,
-    endpoint=diagnostics.report,
-    method=report {
+    endpoint=diagnostics.dmessage,
+    method=DMessage {
         audit_specification.grant()
 }
 
 response src=traffic_light.Diagnostics,
-    endpoint=diagnostics.report,
+    endpoint=diagnostics.dmessage,
     dst=traffic_light.LightsGPIO
-    method=report {
+    method=DMessage {
         audit_specification.grant()
 }
 
