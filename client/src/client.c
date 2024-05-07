@@ -9,7 +9,7 @@
 
 #include <kos_net.h>
 
-#define STATE_REQUEST -1
+#define STATE_REQUEST (-1)
 #define EXAMPLE_HOST "127.0.0.1"
 //#define EXAMPLE_HOST "localhost" //cannot get address info =(: File exists
 #define EXAMPLE_PORT 7777

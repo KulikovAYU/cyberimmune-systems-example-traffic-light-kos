@@ -79,7 +79,7 @@ Example: traffic light control (partial) implementation with KasperskyOS
 
 Transformation of the echo example into the new project.
 
-## Домашнее задание: День 1
+## Домашнее задание: День 2
 
 Задание:
 
@@ -104,3 +104,11 @@ Transformation of the echo example into the new project.
 
 7✅ Отправить все свои изменения в свой репозиторий на github в
 ветку [day2-homework](https://github.com/KulikovAYU/cyberimmune-systems-example-traffic-light-kos/tree/day2-homework)
+
+## Пример схемы светофорного цикла
+
+<img src="pictures/traffic_light_cycle.jpg" width="500" height="auto">
+
+## Пример работы
+
+<img src="pictures/prog_sample.jpg" width="500" height="auto">

@@ -14,8 +14,8 @@
 #include <assert.h>
 
 #define MAX_PENDING_CONNECTIONS 10
-#define STATE_REQUEST -1
-#define STATE_UNKNOWN -2
+#define STATE_REQUEST (-1)
+#define STATE_UNKNOWN (-2)
 
 typedef struct{
     direction buffer;
