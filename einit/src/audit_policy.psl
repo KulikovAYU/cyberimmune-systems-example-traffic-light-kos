@@ -1,3 +1,8 @@
+/* Imports a file containing a declaration of aliases of basic policies
+   and a file containing a declaration of the "flow" (finite-state machine) policy family. */
+use nk.base._
+use nk.flow._
+
 use EDL traffic_light.KlogEntity
 use EDL traffic_light.KlogStorageEntity
 
@@ -7,6 +12,13 @@ response src=traffic_light.KlogStorageEntity dst=traffic_light.KlogEntity interf
 request src=traffic_light.KlogEntity, dst=kl.core.Core {
     // Interface to the Synchronization service.
     match interface=kl.core.Sync { grant () }
+    // Interface to the Task service.
+    match interface=kl.core.Task {
+        match method=FreeSelfEnv { grant () }
+        match method=GetPath { grant () }
+        match method=GetName { grant () }
+        match method=Exit { grant () }
+    }
     // Interface to the Virtual Memory Manager (VMM) service.
     match interface=kl.core.VMM { grant () }
     // Interface to the Thread service.
@@ -23,36 +35,57 @@ request src=traffic_light.KlogEntity, dst=kl.core.Core {
 response src=kl.core.Core, dst=traffic_light.KlogEntity { grant () }
 
 request src=traffic_light.KlogStorageEntity, dst=kl.core.Core {
-    // Interface to the Synchronization service.
-    match interface=kl.core.Sync { grant () }
-
-    // Interface to the Virtual Memory Manager (VMM) service.
-    match interface=kl.core.VMM { grant () }
-    // Interface to the Thread service.
-    match interface=kl.core.Thread { grant () }
-    // Interface to the Hal service.
-    match interface=kl.core.HAL, method=DebugWrite { grant () }
-    match interface=kl.core.HAL, method=GetEnv { grant () }
-    // Interface to the HandleManager service.
-    match interface=kl.core.Handle { grant () }
+     // Interface to the Synchronization service.
+       match interface=kl.core.Sync { grant () }
+       // Interface to the Task service.
+       match interface=kl.core.Task {
+           match method=FreeSelfEnv { grant () }
+           match method=GetPath { grant () }
+           match method=GetName { grant () }
+           match method=Exit { grant () }
+       }
+       // Interface to the Virtual Memory Manager (VMM) service.
+       match interface=kl.core.VMM { grant () }
+       // Interface to the Thread service.
+       match interface=kl.core.Thread { grant () }
+       // Interface to the Hal service.
+       match interface=kl.core.HAL, method=DebugWrite { grant () }
+       // Interface to the HandleManager service.
+       match interface=kl.core.Handle { grant () }
 }
 
 response src=kl.core.Core, dst=traffic_light.KlogStorageEntity { grant () }
 
-policy object audit_specification : Base {}
+execute src=Einit dst=traffic_light.Diagnostics method=main {
+    audit_specification.init { sid: dst_sid }
+}
 
 request src=traffic_light.LightsGPIO,
     dst=traffic_light.Diagnostics,
     endpoint=diagnostics.dmessage,
     method=DMessage {
-        audit_specification.grant()
+            audit_specification.allow { sid: dst_sid, states: [ "not_sent" ] }
+            audit_specification.enter { sid: dst_sid, state: "sent" }
 }
 
 response src=traffic_light.Diagnostics,
     endpoint=diagnostics.dmessage,
     dst=traffic_light.LightsGPIO
     method=DMessage {
-        audit_specification.grant()
+        audit_specification.allow { sid: src_sid, states: [ "sent" ] }
+        audit_specification.enter { sid: src_sid, state: "not_sent" }
+}
+
+policy object audit_specification : Flow {
+    type States = "not_sent" | "sent"
+    config = {
+        states      : [ "not_sent", "sent" ],
+        initial     : "not_sent",
+        transitions : {
+            "not_sent" : [ "sent" ],
+            "sent"     : [ "not_sent" ]
+        }
+    }
 }
 
 // We declare the profile for audit.
