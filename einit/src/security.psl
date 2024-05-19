@@ -21,10 +21,22 @@ use EDL client.Client
 use EDL traffic_light.ControlSystem
 use EDL traffic_light.LightsGPIO
 use EDL traffic_light.Diagnostics
+use EDL traffic_light.Connector
 
 use audit_policy._
 
 /***/
+
+
+request
+{
+    match src = traffic_light.Connector
+    {
+        match dst = kl.VfsRamFs                           { grant () }
+        match dst = kl.VfsNet                             { grant () }
+    }
+}
+
 
 /* Security policy. */
 policy object tl_cycle_specification : HashSet {
@@ -88,6 +100,10 @@ request src=traffic_light.ControlSystem
         grant()
 }
 
+request src = traffic_light.ControlSystem, dst = traffic_light.Connector {
+    match interface = traffic_light.IMode, method = SendConfiguration { grant () }
+}
+
 /* There is setting light mode*/
 request src=traffic_light.ControlSystem
     dst=traffic_light.LightsGPIO
@@ -110,6 +126,14 @@ request src=kl.core.Core {
 
 request src=traffic_light.LightsGPIO dst=kl.core.Core {
     grant ()
+}
+
+request src=traffic_light.Connector dst=kl.core.Core {
+    grant ()
+}
+
+request src=traffic_light.Connector dst=Einit {
+    grant()
 }
 
 /* allow request to diagnostics module */
@@ -208,6 +232,10 @@ response src = kl.core.Core, dst = kl.drivers.BSP{
 
 execute src=Einit, dst=kl.drivers.GPIO{
     grant()
+}
+
+response src = traffic_light.Connector, dst = traffic_light.ControlSystem {
+    match interface = traffic_light.IMode, method = SendConfiguration { grant () }
 }
 
 /**

@@ -26,6 +26,7 @@ set (ENTITIES
         ControlSystem
         LightsGPIO
         Diagnostics
+        Connector
         KlogStorageEntity)
 
 set_target_properties (${precompiled_vfsVfsNet} PROPERTIES
