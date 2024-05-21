@@ -1,0 +1,14 @@
+package traffic_light.ControlSystem
+
+struct TrafficLightConfiguration {
+    SInt32 configDirection;
+    SInt32 configRedDuration;
+    SInt32 configYellowDuration;
+    SInt32 configGreenDuration;
+    SInt32 configDisabled;
+    SInt32 configService;
+}
+
+interface {
+     set(in UInt8 value, out UInt8 result);
+}

@@ -121,6 +121,8 @@ int main(void){
 
         prev_dir = dir;
         print_directions(&prev_dir);
+
+        sleep(30);
     }
 
     return EXIT_SUCCESS;

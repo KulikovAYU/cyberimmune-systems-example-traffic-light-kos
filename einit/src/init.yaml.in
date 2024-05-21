@@ -5,8 +5,6 @@ entities:
   connections:
   - target: traffic_light.LightsGPIO
     id: lights_gpio_connection
-  - target: traffic_light.Connector
-    id: connector_connection
 @INIT_ControlSystem_ENTITY_CONNECTIONS@
 
 # The `LightsGPIO` entity can only respond to requests.
@@ -36,6 +34,8 @@ entities:
   env:
     VFS_NETWORK_BACKEND: client:kl.VfsNet
   connections:
+  - target: traffic_light.ControlSystem
+    id: connector_control_system_connection
   - target: kl.VfsNet
     id: kl.VfsNet
 @INIT_connector_ENTITY_CONNECTIONS+@

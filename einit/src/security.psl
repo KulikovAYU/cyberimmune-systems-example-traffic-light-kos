@@ -32,8 +32,8 @@ request
 {
     match src = traffic_light.Connector
     {
-        match dst = kl.VfsRamFs                           { grant () }
-        match dst = kl.VfsNet                             { grant () }
+        match dst = kl.VfsRamFs { grant () }
+        match dst = kl.VfsNet { grant () }
     }
 }
 
@@ -100,9 +100,29 @@ request src=traffic_light.ControlSystem
         grant()
 }
 
-request src = traffic_light.ControlSystem, dst = traffic_light.Connector {
-    match interface = traffic_light.IMode, method = SendConfiguration { grant () }
+request src=traffic_light.Connector
+    dst=traffic_light.ControlSystem
+    endpoint=ctrl.mode
+    method=set {
+     grant ()
 }
+
+request src=traffic_light.Connector dst=kl.core.Core {
+    grant ()
+}
+
+request src=traffic_light.Connector, dst=kl.VfsNet {
+    grant()
+}
+
+execute src=Einit, dst=traffic_light.Connector{
+    grant()
+}
+
+response src=kl.core.Core, dst=traffic_light.Connector{
+    grant()
+}
+
 
 /* There is setting light mode*/
 request src=traffic_light.ControlSystem
@@ -128,13 +148,7 @@ request src=traffic_light.LightsGPIO dst=kl.core.Core {
     grant ()
 }
 
-request src=traffic_light.Connector dst=kl.core.Core {
-    grant ()
-}
 
-request src=traffic_light.Connector dst=Einit {
-    grant()
-}
 
 /* allow request to diagnostics module */
 request src=traffic_light.LightsGPIO
@@ -234,9 +248,7 @@ execute src=Einit, dst=kl.drivers.GPIO{
     grant()
 }
 
-response src = traffic_light.Connector, dst = traffic_light.ControlSystem {
-    match interface = traffic_light.IMode, method = SendConfiguration { grant () }
-}
+
 
 /**
  * Allows the tasks with the kl.drivers.GPIO class

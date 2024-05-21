@@ -26,6 +26,4 @@ struct CrosswaysMode {
 interface {
     /* IMode interface method */
     FMode(in CrosswaysMode mode, out CrosswaysMode result);
-
-    SendConfiguration(out CrosswaysMode config);
 }

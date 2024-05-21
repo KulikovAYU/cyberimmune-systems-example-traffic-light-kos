@@ -1,0 +1,5 @@
+component traffic_light.CControlSystem
+
+endpoints {
+    mode : traffic_light.ControlSystem
+}

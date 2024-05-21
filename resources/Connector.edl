@@ -1,6 +1,1 @@
 entity traffic_light.Connector
-
-endpoints
-{
-    requestConfiguration : traffic_light.IMode
-}

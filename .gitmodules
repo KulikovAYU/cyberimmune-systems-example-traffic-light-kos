@@ -1,0 +1,3 @@
+[submodule "third-party/json-parser"]
+	path = third-party/json-parser
+	url = https://github.com/json-parser/json-parser.git
