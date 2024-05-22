@@ -1,8 +1,5 @@
-### request operation mode
-GET http://localhost:8081/mode/1 HTTP/1.1
-
-### request operation mode
-GET http://localhost:8081/mode/0 HTTP/1.1
+### test get request to get mode tl-id = 12345
+GET http://localhost:8081/mode/12345 HTTP/1.1
 
 ### set normal mode
 POST http://localhost:8081/set_normal_mode HTTP/1.1
