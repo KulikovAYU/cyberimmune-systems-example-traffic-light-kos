@@ -104,7 +104,10 @@ request src=traffic_light.Connector
     dst=traffic_light.ControlSystem
     endpoint=ctrl.mode
     method=set {
-     grant ()
+      assert(bool.any([
+            message.value == 0,
+            message.value == 1,
+        ]))
 }
 
 request src=traffic_light.Connector dst=kl.core.Core {
