@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-
+#include <string.h>  // bzero(), strlen(), strcmp()
 #include <response-parser.h>
+#include "json.h"
 
 struct traffic_light_mode_t traffic_light_mode;
 
@@ -20,7 +21,7 @@ static void process_value(json_value *value, int depth);
 union {
     struct
     {
-        unsigned int is_mode_id : 1;
+        unsigned int is_tl_mode : 1;
     };
     unsigned int flags;
 } update_modes;
@@ -29,9 +30,9 @@ union {
 void update_modes_field(char *field)
 {
     update_modes.flags = 0;
-    if (strcmp("id", field) == 0)
+    if (strcmp("tl-mode", field) == 0)
     {
-        update_modes.is_mode_id = 1;
+        update_modes.is_tl_mode = 1;
     }
 }
 
@@ -41,10 +42,10 @@ void update_field_values_string(char *value)
 
 void update_field_values_int(int value)
 {
-    if (update_modes.is_mode_id)
+    if (update_modes.is_tl_mode)
     {
-        traffic_light_mode.id = value;
-        fprintf(stderr, "updated mode id: %d\n", traffic_light_mode.id);
+        traffic_light_mode.mode = value;
+        fprintf(stderr, "updated mode: %d\n", traffic_light_mode.mode);
     }
 }
 

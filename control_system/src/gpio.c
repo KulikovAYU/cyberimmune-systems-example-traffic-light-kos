@@ -118,6 +118,8 @@ int gpio_work(void* context){
         struct tl_state *state = mode == SERVICE_MODE ? tl_state2 : tl_state1;
         int modes_cnt = mode == SERVICE_MODE ? SERVICE_STATES_NUM : STATES_NUM;
 
+        fprintf(stderr, "GPIO mode %d\n", mode);
+
         for (int i = 0; i < modes_cnt; ++i) {
 
             do_set_mode(state[i].dir0, state[i].dir1, &proxy);
@@ -129,6 +131,8 @@ int gpio_work(void* context){
 
             if(mode != SERVICE_MODE)
                 sleep(state[i].duration);
+            else
+                sleep(1);
         }
     }
 }

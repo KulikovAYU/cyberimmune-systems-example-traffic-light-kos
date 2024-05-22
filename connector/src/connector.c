@@ -200,24 +200,20 @@ int main(int argc, const char *argv[]){
     traffic_light_ControlSystem_set_res res;
 
     /* Test loop. */
-    int mode = 1;
     while(1)
     {
-        int rc = get_traffic_light_configuration(mode);
+        int rc = get_traffic_light_configuration(12345);
         fprintf(stderr, "%s Сonfiguration parsing status: %s\n", LogPrefix, rc == EXIT_SUCCESS ? "OK" : "FAILED");
-
-        if(rc != EXIT_SUCCESS)
-            continue;
-
-        req.value = traffic_light_mode.id;
-
-        fprintf(stderr, "%s Sending config direction %d\n", LogPrefix,  req.value);
-        if (traffic_light_ControlSystem_set(&proxy.base, &req, NULL, &res, NULL) != rcOk)
+        if (rc == EXIT_SUCCESS)
         {
-            fprintf(stderr, "%s Failed to call ctrl.mode.set()\n", LogPrefix);
-        }
+            req.value = traffic_light_mode.mode;
 
-        mode = (mode + 1) % 2;
+            fprintf(stderr, "%s Set mode %d\n", LogPrefix, (int)req.value);
+            if (traffic_light_ControlSystem_set(&proxy.base, &req, NULL, &res, NULL) != rcOk)
+            {
+                fprintf(stderr, "%s Failed to call ctrl.mode.set()\n", LogPrefix);
+            }
+        }
         sleep(15);
     }
 

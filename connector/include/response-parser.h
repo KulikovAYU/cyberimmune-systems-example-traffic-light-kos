@@ -14,7 +14,7 @@
 int parse_response(char *response);
 
 struct traffic_light_mode_t{
-    int id;
+    int mode;
 };
 
 extern struct traffic_light_mode_t traffic_light_mode;

@@ -3,3 +3,25 @@ GET http://localhost:8081/mode/1 HTTP/1.1
 
 ### request operation mode
 GET http://localhost:8081/mode/0 HTTP/1.1
+
+### set normal mode
+POST http://localhost:8081/set_normal_mode HTTP/1.1
+content-type: application/json
+
+{
+    "tl-id":"12345",
+    "tl-mode": 0
+}
+
+
+### set service mode
+POST http://localhost:8081/set_service_mode HTTP/1.1
+content-type: application/json
+
+{
+    "tl-id":"12345",
+    "tl-mode": 1
+}
+
+
+

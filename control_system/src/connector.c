@@ -107,8 +107,7 @@ static void connector_loop(struct SetModeInfo* info, struct Mode *mode)
         traffic_light_ControlSystem_entity_dispatch(&info->entity, &info->req.base_, &info->req_arena,
                                                     &info->res.base_, &info->res_arena);
 
-        info->res.ctrl_mode.set.result;
-        //set_mode(mode, info->res.ctrl_mode.set.result);
+        set_mode(mode, info->res.ctrl_mode.set.result);
     }
 
     /* Send response. */
